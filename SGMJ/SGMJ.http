@@ -1,0 +1,6 @@
+@SGMJ_HostAddress = http://localhost:5072
+
+GET {{SGMJ_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
