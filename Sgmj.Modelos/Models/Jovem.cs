@@ -19,6 +19,12 @@ namespace Sgmj.Modelos.Models
 
         // Propriedade de navegação: um Jovem pertence a um Setor
         public virtual Setor Setor { get; set; }
+        public string FotoPerfil  { get; set; } = string.Empty;
+
+        public Jovem( string nome)
+        {
+            Nome = nome;
+        }
 
     }
 }

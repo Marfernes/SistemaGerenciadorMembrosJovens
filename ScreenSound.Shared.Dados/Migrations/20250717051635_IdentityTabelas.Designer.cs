@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SGMJ.Dados.Banco.Context;
 
@@ -11,9 +12,11 @@ using SGMJ.Dados.Banco.Context;
 namespace SGMJ.Dados.Migrations
 {
     [DbContext(typeof(SgmjContext))]
-    partial class SgmjContextModelSnapshot : ModelSnapshot
+    [Migration("20250717051635_IdentityTabelas")]
+    partial class IdentityTabelas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -238,10 +241,6 @@ namespace SGMJ.Dados.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FotoPerfil")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
