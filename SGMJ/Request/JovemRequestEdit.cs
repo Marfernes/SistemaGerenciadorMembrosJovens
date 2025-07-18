@@ -2,4 +2,4 @@
 
 namespace SGMJ.API.Request;
     public record JovemRequestEdit(int Id, string nome, DateTime dataNascimento, string telefone, string email, int setorId, Setor setor, string? fotoPerfil)
-    : JovemRequest(nome, dataNascimento, telefone, email, setorId, setor, fotoPerfil);
+    : JovemRequest(nome, dataNascimento, telefone, email, setorId, fotoPerfil);

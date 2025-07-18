@@ -41,21 +41,33 @@ namespace SGMJ.API.EndPoints
                 var nome = jovemRequest.nome.Trim();
                 var imagemJovem = DateTime.Now.ToString("ddMMyyyyhhss") + "." + nome + ".jpg";
 
-                var path = Path.Combine(env.ContentRootPath,
-                    "wwwroot", "FotosPerfil", imagemJovem);
+                var path = Path.Combine(env.ContentRootPath, "wwwroot", "FotosPerfil", imagemJovem);
+                if (!string.IsNullOrEmpty(jovemRequest.fotoPerfil))
+                {
+                    using MemoryStream ms = new MemoryStream(Convert.FromBase64String(jovemRequest.fotoPerfil!));
+                    using FileStream fs = new(path, FileMode.Create);
+                    await ms.CopyToAsync(fs);
+                }
 
-                using MemoryStream ms = new MemoryStream(Convert.FromBase64String(jovemRequest.fotoPerfil!));
-                using FileStream fs = new(path, FileMode.Create);
-                await ms.CopyToAsync(fs);
-                
 
-                var jovem = new Jovem(jovemRequest.nome) { FotoPerfil = $"/FotosPerfil/{imagemJovem}" };
+
+                var jovem = new Jovem(
+                     nome,
+                     jovemRequest.dataNascimento,
+                     jovemRequest.telefone,
+                     jovemRequest.email,
+                     jovemRequest.setorId
+                )
+                {
+                    FotoPerfil = $"/FotosPerfil/{imagemJovem}"
+                };
 
                 dal.Adicionar(jovem);
                 return Results.Ok();
             });
 
-            app.MapDelete("/Jovens/{id}", ([FromServices] DAL<Jovem> dal, int id) => {
+            app.MapDelete("/Jovens/{id}", ([FromServices] DAL<Jovem> dal, int id) =>
+            {
                 var jovem = dal.RecuperarPor(a => a.Id == id);
                 if (jovem is null)
                 {
@@ -66,18 +78,19 @@ namespace SGMJ.API.EndPoints
 
             });
 
-            app.MapPut("/Jovens", ([FromServices] DAL<Jovem> dal, [FromBody] JovemRequestEdit jovemRequestEdit) => {
+            app.MapPut("/Jovens", ([FromServices] DAL<Jovem> dal, [FromBody] JovemRequestEdit jovemRequestEdit) =>
+            {
                 var jovemAtualizar = dal.RecuperarPor(a => a.Id == jovemRequestEdit.Id);
                 if (jovemAtualizar is null)
                 {
                     return Results.NotFound();
                 }
-                jovemAtualizar.Nome = jovemRequestEdit.nome;             
+                jovemAtualizar.Nome = jovemRequestEdit.nome;
                 dal.Atualizar(jovemAtualizar);
                 return Results.Ok();
             });
             #endregion
-        }      
+        }
         private static ICollection<JovemReponse> EntityListToResponseList(IEnumerable<Jovem> listaDeJovens)
         {
             return listaDeJovens.Select(a => EntityToResponse(a)).ToList();

@@ -12,17 +12,16 @@ namespace SGMJ.Dados.Banco.Context
 
         public SgmjContext(DbContextOptions<SgmjContext> options) : base(options)
         {
-
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
             modelBuilder.Entity<Jovem>()
                 .HasOne(j => j.Setor)
                 .WithMany(s => s.Jovens)
                 .HasForeignKey(j => j.SetorId);
         }
     }
+
 }
