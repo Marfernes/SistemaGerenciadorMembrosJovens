@@ -23,6 +23,7 @@ builder.Services
 
 builder.Services.AddTransient<DAL<Jovem>>();
 builder.Services.AddTransient<DAL<Setor>>();
+builder.Services.AddTransient<DAL<Congregacao>>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
