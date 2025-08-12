@@ -12,8 +12,8 @@ using SGMJ.Dados.Banco.Context;
 namespace SGMJ.Dados.Migrations
 {
     [DbContext(typeof(SgmjContext))]
-    [Migration("20250718034426_AdicionaIdentityAoBanco")]
-    partial class AdicionaIdentityAoBanco
+    [Migration("20250812201501_NovaTabelaInit")]
+    partial class NovaTabelaInit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,9 +21,6 @@ namespace SGMJ.Dados.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.7")
-                .HasAnnotation("Proxies:ChangeTracking", false)
-                .HasAnnotation("Proxies:CheckEquality", false)
-                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -229,6 +226,28 @@ namespace SGMJ.Dados.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Sgmj.Modelos.Models.Congregacao", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SetorId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SetorId");
+
+                    b.ToTable("Congregacoes");
+                });
+
             modelBuilder.Entity("Sgmj.Modelos.Models.Jovem", b =>
                 {
                     b.Property<int>("Id")
@@ -236,6 +255,9 @@ namespace SGMJ.Dados.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CongregacaoId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("DataNascimento")
                         .HasColumnType("datetime2");
@@ -252,16 +274,13 @@ namespace SGMJ.Dados.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SetorId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Telefone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SetorId");
+                    b.HasIndex("CongregacaoId");
 
                     b.ToTable("Jovens");
                 });
@@ -273,10 +292,6 @@ namespace SGMJ.Dados.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Congregacao")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NomeSetor")
                         .IsRequired()
@@ -338,20 +353,36 @@ namespace SGMJ.Dados.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sgmj.Modelos.Models.Jovem", b =>
+            modelBuilder.Entity("Sgmj.Modelos.Models.Congregacao", b =>
                 {
                     b.HasOne("Sgmj.Modelos.Models.Setor", "Setor")
-                        .WithMany("Jovens")
+                        .WithMany("Congregacoes")
                         .HasForeignKey("SetorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Setor");
                 });
 
-            modelBuilder.Entity("Sgmj.Modelos.Models.Setor", b =>
+            modelBuilder.Entity("Sgmj.Modelos.Models.Jovem", b =>
+                {
+                    b.HasOne("Sgmj.Modelos.Models.Congregacao", "Congregacao")
+                        .WithMany("Jovens")
+                        .HasForeignKey("CongregacaoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Congregacao");
+                });
+
+            modelBuilder.Entity("Sgmj.Modelos.Models.Congregacao", b =>
                 {
                     b.Navigation("Jovens");
+                });
+
+            modelBuilder.Entity("Sgmj.Modelos.Models.Setor", b =>
+                {
+                    b.Navigation("Congregacoes");
                 });
 #pragma warning restore 612, 618
         }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SGMJ.Dados.Migrations
 {
     /// <inheritdoc />
-    public partial class IdentityTabelas : Migration
+    public partial class NovaTabelaInit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -58,8 +58,7 @@ namespace SGMJ.Dados.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    NomeSetor = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Congregacao = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    NomeSetor = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -173,6 +172,26 @@ namespace SGMJ.Dados.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Congregacoes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nome = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SetorId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Congregacoes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Congregacoes_Setores_SetorId",
+                        column: x => x.SetorId,
+                        principalTable: "Setores",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Jovens",
                 columns: table => new
                 {
@@ -182,17 +201,18 @@ namespace SGMJ.Dados.Migrations
                     DataNascimento = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Telefone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SetorId = table.Column<int>(type: "int", nullable: false)
+                    CongregacaoId = table.Column<int>(type: "int", nullable: false),
+                    FotoPerfil = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Jovens", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Jovens_Setores_SetorId",
-                        column: x => x.SetorId,
-                        principalTable: "Setores",
+                        name: "FK_Jovens_Congregacoes_CongregacaoId",
+                        column: x => x.CongregacaoId,
+                        principalTable: "Congregacoes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -235,9 +255,14 @@ namespace SGMJ.Dados.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Jovens_SetorId",
-                table: "Jovens",
+                name: "IX_Congregacoes_SetorId",
+                table: "Congregacoes",
                 column: "SetorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Jovens_CongregacaoId",
+                table: "Jovens",
+                column: "CongregacaoId");
         }
 
         /// <inheritdoc />
@@ -266,6 +291,9 @@ namespace SGMJ.Dados.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Congregacoes");
 
             migrationBuilder.DropTable(
                 name: "Setores");

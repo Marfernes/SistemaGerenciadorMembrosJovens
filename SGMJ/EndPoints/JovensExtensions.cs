@@ -3,6 +3,7 @@ using Sgmj.Modelos.Models;
 using SGMJ.API.Response;
 using SGMJ.Dados.Banco.DAL;
 using SGMJ.API.Request;
+using SGMJ.API.Services.Interfaces;
 
 namespace SGMJ.API.EndPoints
 {
@@ -13,15 +14,10 @@ namespace SGMJ.API.EndPoints
         {
 
             #region Endpoint Jovens
-            app.MapGet("/Jovens", ([FromServices] DAL<Jovem> dal) =>
+            app.MapGet("/Jovens", async ([FromServices] IJovemService _iJovemservice) =>
             {
-                var listaDeJovens = dal.Listar();
-                if (listaDeJovens is null)
-                {
-                    return Results.NotFound();
-                }
-                var listaDeJovensResponse = EntityListToResponseList(listaDeJovens);
-                return Results.Ok(listaDeJovensResponse);
+                var listaDeJovens = await _iJovemservice.ListarJovens();
+                return Results.Ok(listaDeJovens);
             });
 
             app.MapGet("/Jovens/{nome}", ([FromServices] DAL<Jovem> dal, string nome) =>
@@ -31,7 +27,7 @@ namespace SGMJ.API.EndPoints
                 {
                     return Results.NotFound();
                 }
-                return Results.Ok(EntityToResponse(jovem));
+                return Results.Ok(jovem);
 
             });
 
@@ -56,7 +52,7 @@ namespace SGMJ.API.EndPoints
                      jovemRequest.dataNascimento,
                      jovemRequest.telefone,
                      jovemRequest.email,
-                     jovemRequest.setorId
+                     jovemRequest.congregacaoId
                 )
                 {
                     FotoPerfil = $"/FotosPerfil/{imagemJovem}"
@@ -91,14 +87,8 @@ namespace SGMJ.API.EndPoints
             });
             #endregion
         }
-        private static ICollection<JovemReponse> EntityListToResponseList(IEnumerable<Jovem> listaDeJovens)
-        {
-            return listaDeJovens.Select(a => EntityToResponse(a)).ToList();
-        }
+       
 
-        private static JovemReponse EntityToResponse(Jovem jovem)
-        {
-            return new JovemReponse(jovem.Id, jovem.Nome, jovem.DataNascimento, jovem.Telefone, jovem.Email, jovem.SetorId, jovem.Setor, jovem.FotoPerfil);
-        }
+    
     }
 }

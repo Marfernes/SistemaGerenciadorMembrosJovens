@@ -23,15 +23,16 @@ namespace SGMJ.Dados.Banco.Context
 
             modelBuilder.Entity<Congregacao>()
                 .HasOne(c => c.Setor)
-                .WithMany(s => s.Congregacoes) // Verifique se o nome da propriedade no Setor é correto
+                .WithMany(s => s.Congregacoes)
                 .HasForeignKey(c => c.SetorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Jovem>()
-                .HasOne(j => j.Setor)
-                .WithMany(s => s.Jovens)
-                .HasForeignKey(j => j.SetorId)
+                .HasOne(j => j.Congregacao)
+                .WithMany(c => c.Jovens)
+                .HasForeignKey(j => j.CongregacaoId)
                 .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 

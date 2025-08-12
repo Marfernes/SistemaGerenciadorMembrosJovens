@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Sgmj.Modelos.Models;
 using SGMJ.API.EndPoints;
+using SGMJ.API.Services.Implementations;
+using SGMJ.API.Services.Interfaces;
 using SGMJ.Dados.Banco.Context;
 using SGMJ.Dados.Banco.DAL;
 using SGMJ.Dados.Models;
@@ -25,7 +27,16 @@ builder.Services.AddTransient<DAL<Jovem>>();
 builder.Services.AddTransient<DAL<Setor>>();
 builder.Services.AddTransient<DAL<Congregacao>>();
 
-builder.Services.AddControllers();
+builder.Services.AddScoped<IJovemService, JovemService>();
+builder.Services.AddScoped<ICongregacaoService, CongregacaoService>();
+
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    options.JsonSerializerOptions.MaxDepth = 64; 
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -54,6 +65,7 @@ app.UseCors("AllowFrontend");
 app.UseStaticFiles();
 
 app.AddEndPointsJovens();
+app.AddEndPointsCongregacoes();
 
 app.UseHttpsRedirection();
 

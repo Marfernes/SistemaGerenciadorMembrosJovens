@@ -253,6 +253,9 @@ namespace SGMJ.Dados.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CongregacaoId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("DataNascimento")
                         .HasColumnType("datetime2");
 
@@ -268,16 +271,13 @@ namespace SGMJ.Dados.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SetorId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Telefone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SetorId");
+                    b.HasIndex("CongregacaoId");
 
                     b.ToTable("Jovens");
                 });
@@ -363,20 +363,23 @@ namespace SGMJ.Dados.Migrations
 
             modelBuilder.Entity("Sgmj.Modelos.Models.Jovem", b =>
                 {
-                    b.HasOne("Sgmj.Modelos.Models.Setor", "Setor")
+                    b.HasOne("Sgmj.Modelos.Models.Congregacao", "Congregacao")
                         .WithMany("Jovens")
-                        .HasForeignKey("SetorId")
+                        .HasForeignKey("CongregacaoId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Setor");
+                    b.Navigation("Congregacao");
+                });
+
+            modelBuilder.Entity("Sgmj.Modelos.Models.Congregacao", b =>
+                {
+                    b.Navigation("Jovens");
                 });
 
             modelBuilder.Entity("Sgmj.Modelos.Models.Setor", b =>
                 {
                     b.Navigation("Congregacoes");
-
-                    b.Navigation("Jovens");
                 });
 #pragma warning restore 612, 618
         }

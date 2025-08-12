@@ -9,18 +9,17 @@ namespace Sgmj.Modelos.Models
         public string Telefone { get; set; }
         public string Email { get; set; }
 
-        public int SetorId { get; set; }
-     
-        public virtual Setor Setor { get; set; }
+        public int CongregacaoId { get; set; }
+        public virtual Congregacao Congregacao { get; set; }
         public string FotoPerfil { get; set; } = string.Empty;
 
-        public Jovem(string nome, DateTime dataNascimento, string telefone, string email, int setorId)
+        public Jovem(string nome, DateTime dataNascimento, string telefone, string email, int congregacaoId)
         {
             Nome = nome;
             DataNascimento = dataNascimento;
             Telefone = telefone;
             Email = email;
-            SetorId = setorId;
+            CongregacaoId = congregacaoId;          
         }
 
     }
