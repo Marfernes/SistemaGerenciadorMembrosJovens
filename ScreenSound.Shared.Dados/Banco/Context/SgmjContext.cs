@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 using Sgmj.Modelos.Models;
 using SGMJ.Dados.Models;
+using System;
+using System.IO;
 
 namespace SGMJ.Dados.Banco.Context
 {
@@ -9,19 +13,48 @@ namespace SGMJ.Dados.Banco.Context
     {
         public DbSet<Jovem> Jovens { get; set; }
         public DbSet<Setor> Setores { get; set; }
+        public DbSet<Congregacao> Congregacoes { get; set; }
 
-        public SgmjContext(DbContextOptions<SgmjContext> options) : base(options)
-        {
-        }
+        public SgmjContext(DbContextOptions<SgmjContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Congregacao>()
+                .HasOne(c => c.Setor)
+                .WithMany(s => s.Congregacoes) // Verifique se o nome da propriedade no Setor é correto
+                .HasForeignKey(c => c.SetorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Jovem>()
                 .HasOne(j => j.Setor)
                 .WithMany(s => s.Jovens)
-                .HasForeignKey(j => j.SetorId);
+                .HasForeignKey(j => j.SetorId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 
+    public class SgmjContextFactory : IDesignTimeDbContextFactory<SgmjContext>
+    {
+        public SgmjContext CreateDbContext(string[] args)
+        {
+          var configuration = new ConfigurationBuilder()
+              .SetBasePath(Directory.GetCurrentDirectory())
+              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+              .Build();
+
+            var connectionString = configuration.GetConnectionString("ScreenSoundV0"); // ou nome da sua connection string
+
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException("Connection string 'ScreenSoundV0' não encontrada no appsettings.json");
+            }
+
+            var optionsBuilder = new DbContextOptionsBuilder<SgmjContext>();
+            optionsBuilder.UseSqlServer(connectionString);
+
+            return new SgmjContext(optionsBuilder.Options);
+        }
+    }  
 }
