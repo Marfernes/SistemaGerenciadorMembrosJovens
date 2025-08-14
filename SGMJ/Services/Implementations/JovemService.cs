@@ -1,18 +1,26 @@
-﻿using Sgmj.Modelos.Models;
+﻿using AutoMapper;
+using Sgmj.Modelos.Models;
+using SGMJ.API.Dtos;
 using SGMJ.API.Request;
 using SGMJ.API.Services.Interfaces;
 using SGMJ.Dados.Banco.DAL;
+using SGMJ.Dados.Repository;
 
 namespace SGMJ.API.Services.Implementations
 {
     public class JovemService : IJovemService
     {
-        private readonly DAL<Jovem> _dalJovem;
-        public JovemService(DAL<Jovem> dalJovem)
+        private readonly IMapper _iMaper;
+        private readonly IJovemRepository _jovemRepository;
+        private readonly DAL<Congregacao> _dalCongregacao;
+
+        public JovemService(IJovemRepository jovemRepository, DAL<Congregacao> dalCongregacao, IMapper iMaper)
         {
-            _dalJovem = dalJovem;
+            _jovemRepository = jovemRepository;
+            _dalCongregacao = dalCongregacao;
+            _iMaper = iMaper;
         }
-        public Task Adcionar(Jovem jovem)
+        public Task Adcionar(JovemDto jovem)
         {
             throw new NotImplementedException();
         }
@@ -22,7 +30,7 @@ namespace SGMJ.API.Services.Implementations
             throw new NotImplementedException();
         }
 
-        public Task<Jovem> BuscarPorId(int id)
+        public Task<JovemDto> BuscarPorId(int id)
         {
             throw new NotImplementedException();
         }
@@ -32,10 +40,10 @@ namespace SGMJ.API.Services.Implementations
             throw new NotImplementedException();
         }
 
-        public async Task<List<Jovem>> ListarJovens()
+        public async Task<List<JovemDto>> ListarJovens()
         {
-            var listaJovens = await _dalJovem.ListarAsync();
-            return listaJovens.ToList();
+            var listaJovens = await _jovemRepository.ListarAsync();     
+            return _iMaper.Map<List<JovemDto>>(listaJovens);
         }
     }
 }

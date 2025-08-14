@@ -12,6 +12,16 @@ namespace Sgmj.Modelos.Models
         public int CongregacaoId { get; set; }
         public virtual Congregacao Congregacao { get; set; }
         public string FotoPerfil { get; set; } = string.Empty;
+        public int Idade
+        {
+            get
+            {
+                var hoje = DateTime.Today;
+                var idade = hoje.Year - DataNascimento.Year;
+                if (DataNascimento.Date > hoje.AddYears(-idade)) idade--;
+                return idade;
+            }
+        }
 
         public Jovem(string nome, DateTime dataNascimento, string telefone, string email, int congregacaoId)
         {

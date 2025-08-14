@@ -53,7 +53,9 @@ namespace SGMJ.Dados.Banco.Context
             }
 
             var optionsBuilder = new DbContextOptionsBuilder<SgmjContext>();
-            optionsBuilder.UseSqlServer(connectionString);
+            
+            optionsBuilder.UseSqlServer(connectionString, b => b.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
+            
 
             return new SgmjContext(optionsBuilder.Options);
         }
